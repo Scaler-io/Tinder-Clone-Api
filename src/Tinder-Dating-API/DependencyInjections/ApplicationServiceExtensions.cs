@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tinder_Dating_API.DependencyInjections
@@ -8,6 +9,13 @@ namespace Tinder_Dating_API.DependencyInjections
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = ApiVersion.Default;
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+            });
+
             return services;
         }
 
