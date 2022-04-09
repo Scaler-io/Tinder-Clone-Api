@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System;
 using System.Threading.Tasks;
-using Tinder_Dating_API.DataAccess;
 using Tinder_Dating_API.Extensions;
 using Tinder_Dating_API.Services.User;
 
