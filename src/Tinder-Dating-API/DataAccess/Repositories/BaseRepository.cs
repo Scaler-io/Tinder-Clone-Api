@@ -21,7 +21,7 @@ namespace Tinder_Dating_API.DataAccess.Repositories
             return await ApplySpecification(spec).CountAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(object id)
         {
             return await _context.Set<T>().FindAsync(id);
         }

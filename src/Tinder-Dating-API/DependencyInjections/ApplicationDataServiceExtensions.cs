@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tinder_Dating_API.DataAccess;
+using Tinder_Dating_API.DataAccess.Interfaces;
 
 namespace Tinder_Dating_API.DependencyInjections
 {
@@ -12,6 +13,9 @@ namespace Tinder_Dating_API.DependencyInjections
             services.AddDbContext<ApplicationDbContext>(options => {
                 options.UseSqlite(config.GetConnectionString("SqliteConnection"));
             });
+
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
             return services;
         }
     }

@@ -23,6 +23,7 @@ namespace Tinder_Dating_API
             services.AddControllers();
             services.AddApplicationServices(_config);
             services.AddDataServices(_config);
+            services.AddBusinessLayerServices();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Tinder_Dating_API", Version = "v1" });

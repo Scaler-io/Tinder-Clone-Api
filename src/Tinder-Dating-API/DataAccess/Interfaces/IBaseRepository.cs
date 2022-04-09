@@ -6,7 +6,7 @@ namespace Tinder_Dating_API.DataAccess.Interfaces
 {
     public interface IBaseRepository<T> where T : class
     {
-        Task<T> GetByIdAsync(int id);
+        Task<T> GetByIdAsync(object id);
         Task<IReadOnlyList<T>> ListAllAsync();
 
         Task<T> GetEntityWithSpec(ISpecification<T> specification);
