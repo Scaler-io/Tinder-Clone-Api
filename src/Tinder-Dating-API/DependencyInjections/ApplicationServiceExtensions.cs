@@ -34,6 +34,14 @@ namespace Tinder_Dating_API.DependencyInjections
                         option.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                     });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("TinderClonePolicy", policy =>
+                {
+                    policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:4200");
+                });
+            });
+
             services.AddVersionedApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
@@ -83,6 +91,8 @@ namespace Tinder_Dating_API.DependencyInjections
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("TinderClonePolicy");
 
             app.UseAuthorization();
 
