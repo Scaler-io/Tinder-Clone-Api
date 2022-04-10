@@ -23,9 +23,9 @@ namespace Tinder_Dating_API.Controllers
             switch (result.ErrorCode)
             {
                 case ErrorCodes.NotFound:
-                    return NotFound(new ApiResponse(ErrorCodes.NotFound));
+                    return NotFound(new ApiResponse(ErrorCodes.NotFound, result.ErrorMessage));
                 case ErrorCodes.Unauthorized:
-                    return Unauthorized(new ApiResponse(ErrorCodes.Unauthorized));
+                    return Unauthorized(new ApiResponse(ErrorCodes.Unauthorized, result.ErrorMessage));
                 case ErrorCodes.Operationfailed:
                     return BadRequest(new ApiResponse(ErrorCodes.Operationfailed, ErrorMessages.Operationfailed));
                 default:

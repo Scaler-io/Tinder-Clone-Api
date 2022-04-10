@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Tinder_Dating_API.Services.Identity;
 using Tinder_Dating_API.Services.User;
 
 namespace Tinder_Dating_API.DependencyInjections
@@ -7,7 +8,10 @@ namespace Tinder_Dating_API.DependencyInjections
     {
         public static IServiceCollection AddBusinessLayerServices(this IServiceCollection services)
         {
-            services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<ITokenService, TokenService>();
+
             return services;
         }
     }

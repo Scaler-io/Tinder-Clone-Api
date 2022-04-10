@@ -17,9 +17,9 @@ namespace Tinder_Dating_API.Models.Core
             return new Result<T> { IsSuccess = true, Value = value };
         }
 
-        public static Result<T> Fail(string errorCode, string erroMessgae)
+        public static Result<T> Fail(string errorCode, string erroMessage=null)
         {
-            return new Result<T> { IsSuccess = false, ErrorCode = errorCode, ErrorMessage = erroMessgae };
+            return new Result<T> { IsSuccess = false, ErrorCode = errorCode, ErrorMessage = erroMessage };
         }
     }
 }

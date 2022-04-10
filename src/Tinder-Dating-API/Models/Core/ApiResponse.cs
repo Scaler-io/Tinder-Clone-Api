@@ -7,7 +7,7 @@ namespace Tinder_Dating_API.Models.Core
         public ApiResponse(string code, string message = null)
         {
             Code = code;
-            Message = message;
+            Message = message ?? GetDefaultMessgae(code);
         }
 
         public string Code { get; set; }

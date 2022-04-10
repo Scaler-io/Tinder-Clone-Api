@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace Tinder_Dating_API.Controllers.v1.User
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetUser([FromRoute] Guid id)
         {
             Logger.Here().MethoEnterd();

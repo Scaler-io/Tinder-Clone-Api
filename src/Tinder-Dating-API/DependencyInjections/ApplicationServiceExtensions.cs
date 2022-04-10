@@ -10,6 +10,10 @@ using Tinder_Dating_API.Models.Core;
 using System.Collections.Generic;
 using Tinder_Dating_API.Infrastructure;
 using Microsoft.Extensions.Configuration;
+using System.Reflection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Tinder_Dating_API.DependencyInjections
 {
@@ -21,6 +25,8 @@ namespace Tinder_Dating_API.DependencyInjections
             )
         {
             var logger = LoggerConfig.Configure(config);
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             services.AddSingleton(Log.Logger)
                     .AddApiVersioning(options =>
@@ -41,6 +47,18 @@ namespace Tinder_Dating_API.DependencyInjections
                     policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:4200");
                 });
             });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["AppSecretKey"])),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
 
             services.AddVersionedApiExplorer(options =>
             {
@@ -93,6 +111,8 @@ namespace Tinder_Dating_API.DependencyInjections
             app.UseRouting();
 
             app.UseCors("TinderClonePolicy");
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
