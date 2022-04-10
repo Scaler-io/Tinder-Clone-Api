@@ -14,7 +14,7 @@ namespace Tinder_Dating_API.DataAccess.Specifications
         }
         public Expression<Func<T, bool>> Criteria { get; }
 
-        public List<Expression<Func<T, object>>> Includes { get; }
+        public List<string> IncludeStrings { get; } = new List<string>();
 
         public Expression<Func<T, object>> OrderBy {get; private set; }
 
@@ -26,9 +26,9 @@ namespace Tinder_Dating_API.DataAccess.Specifications
 
         public bool IsPagingEnabled {get; private set; }
 
-        protected void AddIncludes(Expression<Func<T, object>> include)
+        protected void AddIncludes(string includeString)
         {
-            this.Includes.Add(include);
+            this.IncludeStrings.Add(includeString);
         }
 
         protected void AddOrderBy(Expression<Func<T, object>> orderBy)

@@ -16,7 +16,7 @@ namespace Tinder_Dating_API.DataAccess.Specifications
             if (spec.OrderBy != null) query = query.OrderBy(spec.OrderBy);
             if (spec.OrderByDescending != null) query.OrderByDescending(spec.OrderByDescending);
             if (spec.IsPagingEnabled) query = query.Skip(spec.Skip).Take(spec.Take);
-            if (spec.Includes != null) query = spec.Includes.Aggregate(query, (current, include) => current.Include(include));
+            if (spec.IncludeStrings != null) query = spec.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
 
             return query;
         }

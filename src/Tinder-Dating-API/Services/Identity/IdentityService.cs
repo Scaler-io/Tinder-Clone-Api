@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Tinder_Dating_API.DataAccess.Interfaces;
-using Tinder_Dating_API.DataAccess.Specifications.Identity;
+using Tinder_Dating_API.DataAccess.Specifications.User;
 using Tinder_Dating_API.Entites;
 using Tinder_Dating_API.Extensions;
 using Tinder_Dating_API.Models.Constants;

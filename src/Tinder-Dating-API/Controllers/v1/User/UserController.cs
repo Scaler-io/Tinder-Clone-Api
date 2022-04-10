@@ -2,8 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
+using System.Net;
 using System.Threading.Tasks;
+using Tinder_Dating_API.Entites;
 using Tinder_Dating_API.Extensions;
+using Tinder_Dating_API.Models.Core;
+using Tinder_Dating_API.Models.Responses;
 using Tinder_Dating_API.Services.User;
 
 namespace Tinder_Dating_API.Controllers.v1.User
@@ -19,6 +23,9 @@ namespace Tinder_Dating_API.Controllers.v1.User
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(UserDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetUsers()
         {
             Logger.Here().MethoEnterd();
@@ -31,6 +38,11 @@ namespace Tinder_Dating_API.Controllers.v1.User
 
         [HttpGet("{id}")]
         [Authorize]
+        [ProducesResponseType(typeof(UserDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.InternalServerError)]
+
         public async Task<IActionResult> GetUser([FromRoute] Guid id)
         {
             Logger.Here().MethoEnterd();
@@ -39,6 +51,7 @@ namespace Tinder_Dating_API.Controllers.v1.User
 
             Logger.Here().MethodExited();
             return OkOrFail(user);
+
         }
     }
 }
