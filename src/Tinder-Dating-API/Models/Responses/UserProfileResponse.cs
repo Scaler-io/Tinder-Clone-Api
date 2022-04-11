@@ -5,6 +5,7 @@ namespace Tinder_Dating_API.Models.Responses
     public class UserProfileResponse
     {
         public int Age { get; set; }
+        public string ImageUrl { get; set; }
         public string KnownAs { get; set; }      
         public string Gender { get; set; }
         public string Introduction { get; set; }
