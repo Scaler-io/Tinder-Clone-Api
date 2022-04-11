@@ -14,6 +14,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace Tinder_Dating_API.DependencyInjections
 {
@@ -72,6 +73,7 @@ namespace Tinder_Dating_API.DependencyInjections
             });
 
             services.AddSingleton(x => logger);
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             return services;
         }

@@ -7,6 +7,8 @@ namespace Tinder_Dating_API.DataAccess.Specifications.User
         public FindUserByUserNameSpec(string username)
             :base(u => u.UserName.ToLower() == username.ToLower())
         {
+            AddIncludes("Profile.Address");
+            AddIncludes("Profile.Images");
         }
     }
 }

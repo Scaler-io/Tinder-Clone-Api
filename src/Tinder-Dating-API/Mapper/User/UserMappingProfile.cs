@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using System.Linq;
 using Tinder_Dating_API.Entites;
+using Tinder_Dating_API.Models.Requests;
 using Tinder_Dating_API.Models.Responses;
 
 namespace Tinder_Dating_API.Mapper.User
@@ -9,7 +10,7 @@ namespace Tinder_Dating_API.Mapper.User
     {
         public UserMappingProfile()
         {
-            CreateMap<AppUser, UserDetailsResponse>();
+            CreateMap<AppUser, UserDetailsResponse>().ReverseMap();
 
             CreateMap<UserProfile, UserProfileResponse>()
                 .ForMember(p => p.AddressLine, o => o.MapFrom(s => createAddressLine(s.Address)))
@@ -19,6 +20,8 @@ namespace Tinder_Dating_API.Mapper.User
                 .ForMember(p => p.LastActive, o => o.MapFrom(s => s.Created.ToString("yyyy-MM-dd")));
 
             CreateMap<UserImage, UserImageResponse>();
+
+            CreateMap<UserDetailsUpdateRequest, UserProfile>().ReverseMap();
         }
 
         private string createAddressLine(UserAddress address)

@@ -8,7 +8,7 @@ namespace Tinder_Dating_API.Entites
         public string UserName { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
-        public UserProfile Profile { get; set; }
+        public UserProfile Profile { get; set; } = new UserProfile();
         public AppUser() { }
 
         public AppUser(Guid id, string userName)
