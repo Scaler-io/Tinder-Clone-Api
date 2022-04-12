@@ -2,7 +2,7 @@
 
 namespace Tinder_Dating_API.Models.Responses
 {
-    public class UserProfileResponse
+    public class MemberProfileResponse
     {
         public int Age { get; set; }
         public string ImageUrl { get; set; }
@@ -14,6 +14,6 @@ namespace Tinder_Dating_API.Models.Responses
         public string AddressLine { get; set; }
         public string Created { get; set; }
         public string LastActive { get; set; }
-        public ICollection<UserImageResponse> Images { get; set; }
+        public ICollection<MemberImageResponse> Images { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace Tinder_Dating_API.Services.User
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Result<IReadOnlyList<UserDetailsResponse>>> GetUsers()
+        public async Task<Result<IReadOnlyList<MemberResponse>>> GetUsers()
         {
             _logger.Here().MethoEnterd();
 
@@ -47,12 +47,12 @@ namespace Tinder_Dating_API.Services.User
                 _logger.Information("No users found in database");
             }
 
-            var result = _mapper.Map<IReadOnlyList<UserDetailsResponse>>(users);
+            var result = _mapper.Map<IReadOnlyList<MemberResponse>>(users);
             _logger.Here().MethodExited();
 
-            return Result<IReadOnlyList<UserDetailsResponse>>.Success(result);
+            return Result<IReadOnlyList<MemberResponse>>.Success(result);
         }
-        public async Task<Result<UserDetailsResponse>> GetUser(Guid id)
+        public async Task<Result<MemberResponse>> GetUser(Guid id)
         {
             _logger.Here().MethoEnterd();
 
@@ -64,12 +64,12 @@ namespace Tinder_Dating_API.Services.User
                 _logger.Information("No user was found in database with {@Id}", id);
             }
 
-            var result = _mapper.Map<UserDetailsResponse>(user);
+            var result = _mapper.Map<MemberResponse>(user);
             _logger.Here().MethodExited();
 
-            return Result<UserDetailsResponse>.Success(result);
+            return Result<MemberResponse>.Success(result);
         }
-        public async Task<Result<UserDetailsResponse>> GetUserByUserName(string username)
+        public async Task<Result<MemberResponse>> GetUserByUserName(string username)
         {
             _logger.Here().MethoEnterd();
 
@@ -81,12 +81,12 @@ namespace Tinder_Dating_API.Services.User
                 _logger.Here().Information("No user was found in database with {@UserName}", username);
             }
 
-            var result = _mapper.Map<UserDetailsResponse>(user);
+            var result = _mapper.Map<MemberResponse>(user);
 
             _logger.Here().MethodExited();
-            return Result<UserDetailsResponse>.Success(result);
+            return Result<MemberResponse>.Success(result);
         }
-        public async Task<Result<UserDetailsResponse>> UpdateUserProfile(UserDetailsUpdateRequest request)
+        public async Task<Result<MemberResponse>> UpdateUserProfile(UserDetailsUpdateRequest request)
         {
             _logger.Here().MethoEnterd();
             var repository = _unitOfWork.Repository<AppUser>();
@@ -105,7 +105,7 @@ namespace Tinder_Dating_API.Services.User
             if (await _unitOfWork.Complete() < 1)
             {
                 _logger.Here().Error($"{ErrorCodes.Operationfailed}: User profile update failed.");
-                return Result<UserDetailsResponse>.Fail(ErrorCodes.Operationfailed);
+                return Result<MemberResponse>.Fail(ErrorCodes.Operationfailed);
             }
 
             var userDetails = await GetUserByUserName(username);

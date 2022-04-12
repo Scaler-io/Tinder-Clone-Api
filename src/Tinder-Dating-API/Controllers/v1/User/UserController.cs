@@ -23,7 +23,7 @@ namespace Tinder_Dating_API.Controllers.v1.User
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(UserDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetUsers()
@@ -38,7 +38,7 @@ namespace Tinder_Dating_API.Controllers.v1.User
 
         [HttpGet("{id}", Name = "GetUser")]
         [Authorize]
-        [ProducesResponseType(typeof(UserDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.InternalServerError)]
@@ -56,7 +56,7 @@ namespace Tinder_Dating_API.Controllers.v1.User
 
         [HttpGet("profile/{username}", Name = "GetUserByUserName")]
         [Authorize]
-        [ProducesResponseType(typeof(UserDetailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.InternalServerError)]

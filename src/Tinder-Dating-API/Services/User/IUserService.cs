@@ -9,9 +9,9 @@ namespace Tinder_Dating_API.Services.User
 {
     public interface IUserService
     {
-        Task<Result<IReadOnlyList<UserDetailsResponse>>> GetUsers();
-        Task<Result<UserDetailsResponse>> GetUser(Guid id);
-        Task<Result<UserDetailsResponse>> GetUserByUserName(string username);
-        Task<Result<UserDetailsResponse>> UpdateUserProfile(UserDetailsUpdateRequest request);
+        Task<Result<IReadOnlyList<MemberResponse>>> GetUsers();
+        Task<Result<MemberResponse>> GetUser(Guid id);
+        Task<Result<MemberResponse>> GetUserByUserName(string username);
+        Task<Result<MemberResponse>> UpdateUserProfile(UserDetailsUpdateRequest request);
     }
 }
