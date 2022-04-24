@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Tinder_Dating_API.DataAccess.Interfaces;
 using Tinder_Dating_API.DataAccess.Specifications.User;
@@ -90,15 +89,14 @@ namespace Tinder_Dating_API.Services.User
         {
             _logger.Here().MethoEnterd();
             var repository = _unitOfWork.Repository<AppUser>();
-            
-            var username = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
+
+            var username = _httpContextAccessor.HttpContext.User.GetAuthUserName();
+
             var spec = new FindUserByUserNameSpec(username);
             var user = await repository.GetEntityWithSpec(spec);
 
             _mapper.Map(request, user.Profile);
             //user.Profile.Address = request.Address;
-            
             
             repository.Update(user);
 

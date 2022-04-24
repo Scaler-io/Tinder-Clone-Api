@@ -74,6 +74,7 @@ namespace Tinder_Dating_API.DependencyInjections
 
             services.AddSingleton(x => logger);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.Configure<CloudinaryOption>(config.GetSection("CloudinarySettings"));
 
             return services;
         }

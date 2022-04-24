@@ -15,7 +15,7 @@ namespace Tinder_Dating_API.Entites
         public string LookingFor { get; set; }
         public string Interests { get; set; }
         public UserAddress Address { get; set; }
-        public ICollection<UserImage> Images { get; set; }
+        public ICollection<UserImage> Images { get; set; } = new List<UserImage>();
         
         public Guid AppUserId { get; set; }
         public AppUser User { get; set; }
