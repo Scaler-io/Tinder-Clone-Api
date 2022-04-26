@@ -10,5 +10,6 @@ namespace Tinder_Dating_API.Services.MemberImage
     {
         Task<Result<MemberImageResponse>> AddImageAsync(UploadPhotoRequest request);
         Task<Result<DeletionResult>> DeleteImageAsync(DeletePhotoRequest request);
+        Task<Result<bool>> UpdatePhotoAsMain(UpdatePhotoRequest request);
     }
 }

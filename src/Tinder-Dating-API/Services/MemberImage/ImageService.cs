@@ -15,6 +15,9 @@ using Tinder_Dating_API.Models.Core;
 using Tinder_Dating_API.Models.Requests.Photo;
 using Tinder_Dating_API.Models.Responses;
 using System.IO;
+using System.Linq;
+using System;
+using Newtonsoft.Json;
 
 namespace Tinder_Dating_API.Services.MemberImage
 {
@@ -94,6 +97,39 @@ namespace Tinder_Dating_API.Services.MemberImage
             _logger.Here().MethodExited();
 
             return Result<DeletionResult>.Success(result);
+        }
+
+        public async Task<Result<bool>> UpdatePhotoAsMain(UpdatePhotoRequest request)
+        {
+            _logger.Here().MethoEnterd();
+
+            var username = _httpContextAccessor.HttpContext.User.GetAuthUserName();
+            var spec = new FindUserByUserNameSpec(username);
+            var user = await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(spec);
+
+            var photo = user.Profile.Images.FirstOrDefault(x => x.Id == Guid.Parse(request.PhotoId));
+
+            if (photo.IsMain)
+            {
+                _logger.Here().Information("The image is alredy set as main.");
+                return Result<bool>.Fail(ErrorCodes.BadRequest, "The image is alredy set as main.");
+            }
+
+            var currentMain = user.Profile.Images.FirstOrDefault(x => x.IsMain);
+            if (currentMain != null) currentMain.IsMain = false;
+            photo.IsMain = true;
+
+            if (await _unitOfWork.Complete() < 1)
+            {
+                _logger.Here().Information("{@OperationFailed}: Falied to update photo with id. {@photoId}",
+                    ErrorCodes.Operationfailed,request.PhotoId);
+                return Result<bool>.Fail(ErrorCodes.Operationfailed, "Failed to update photo.");
+            }
+
+            _logger.Here().MethodExited();
+
+            _logger.Here().Information("The photo has been set as main. {@photoId}", request.PhotoId);
+            return Result<bool>.Success(true);
         }
 
         private ImageUploadParams PrepareImageUploadParams(IFormFile file, Stream stream)

@@ -5,7 +5,9 @@ using Serilog;
 using Tinder_Dating_API.Extensions;
 using Tinder_Dating_API.Models.Requests.Photo;
 using Tinder_Dating_API.Services.MemberImage;
-using Microsoft.AspNetCore.Http;
+using Tinder_Dating_API.Models.Responses;
+using Tinder_Dating_API.Models.Core;
+using System.Net;
 
 namespace Tinder_Dating_API.Controllers.v1.Photo
 {
@@ -22,15 +24,36 @@ namespace Tinder_Dating_API.Controllers.v1.Photo
         }
 
         [HttpPost("upload")]
+        [ProducesResponseType(typeof(MemberImageResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UploadPhoto([FromForm]UploadPhotoRequest request)
         {
             Logger.MethoEnterd();
 
+            var username = User.GetAuthUserName(); 
             var result = await _imageService.AddImageAsync(request);
 
             Logger.MethodExited();
-            return OkOrFail(result);
-            //return Ok(request.File);
+
+            return CreatedWithRoute(result,
+                "GetUserByUserName", 
+                new { username = username }
+            );
         }
+    
+        [HttpPut("set-main-photo/{PhotoId}")]
+        public async Task<IActionResult> SetAsMainPhoto([FromRoute] UpdatePhotoRequest request)
+        {
+            Logger.Here().MethoEnterd();
+
+            var result = await _imageService.UpdatePhotoAsMain(request);
+
+            Logger.Here().MethodExited();
+
+            return OkOrFail(result);
+        }
+
     }
 }

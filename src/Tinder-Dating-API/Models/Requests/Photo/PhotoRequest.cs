@@ -11,4 +11,9 @@ namespace Tinder_Dating_API.Models.Requests.Photo
     {
         public string PublicId { get; set; }  
     }
+
+    public class UpdatePhotoRequest
+    {
+        public string PhotoId { get; set; }
+    }
 }
