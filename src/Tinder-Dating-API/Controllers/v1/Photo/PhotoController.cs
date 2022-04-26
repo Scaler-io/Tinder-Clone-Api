@@ -44,6 +44,10 @@ namespace Tinder_Dating_API.Controllers.v1.Photo
         }
     
         [HttpPut("set-main-photo/{PhotoId}")]
+        [ProducesResponseType(typeof(MemberImageResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> SetAsMainPhoto([FromRoute] UpdatePhotoRequest request)
         {
             Logger.Here().MethoEnterd();
@@ -55,5 +59,20 @@ namespace Tinder_Dating_API.Controllers.v1.Photo
             return OkOrFail(result);
         }
 
+        [HttpDelete("delete-photo/{PhotoId}")]
+        [ProducesResponseType(typeof(MemberImageResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> DeletePhoto([FromRoute] DeletePhotoRequest request)
+        {
+            Logger.Here().MethoEnterd();
+
+            var result = await _imageService.DeleteImageAsync(request);
+
+            Logger.Here().MethodExited();
+
+            return OkOrFail(result);
+        } 
     }
 }

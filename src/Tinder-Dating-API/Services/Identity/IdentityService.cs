@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Microsoft.AspNetCore.Http;
+using Serilog;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -19,12 +20,14 @@ namespace Tinder_Dating_API.Services.Identity
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public IdentityService(ILogger logger, IUnitOfWork unitOfWork, ITokenService tokenService)
+        public IdentityService(ILogger logger, IUnitOfWork unitOfWork, ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _tokenService = tokenService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<Result<AuthSuccessResponse>> Login(LoginRequest request)
@@ -107,6 +110,16 @@ namespace Tinder_Dating_API.Services.Identity
 
             _logger.Here().MethodExited();
             return true;
+        }
+        public async Task<AppUser> GetCurrentAuthUser()
+        {
+            var username    =      _httpContextAccessor
+                                    .HttpContext
+                                    .User
+                                    .GetAuthUserName();
+
+            var spec = new FindUserByUserNameSpec(username);
+            return await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(spec);
         }
     }
 }

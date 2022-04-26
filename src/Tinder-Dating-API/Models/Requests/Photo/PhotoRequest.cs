@@ -9,7 +9,7 @@ namespace Tinder_Dating_API.Models.Requests.Photo
 
     public class DeletePhotoRequest
     {
-        public string PublicId { get; set; }  
+        public string PhotoId { get; set; }  
     }
 
     public class UpdatePhotoRequest

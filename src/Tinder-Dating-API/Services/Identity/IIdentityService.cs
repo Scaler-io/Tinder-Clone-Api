@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Tinder_Dating_API.Entites;
 using Tinder_Dating_API.Models.Core;
 using Tinder_Dating_API.Models.Requests;
 using Tinder_Dating_API.Models.Responses;
@@ -10,5 +11,6 @@ namespace Tinder_Dating_API.Services.Identity
         Task<Result<AuthSuccessResponse>> Register(RegisterUserRequest request);
         Task<Result<AuthSuccessResponse>> Login(LoginRequest request);
         Task<bool> IsUserNameExists(string username);
+        Task<AppUser> GetCurrentAuthUser(); 
     }
 }

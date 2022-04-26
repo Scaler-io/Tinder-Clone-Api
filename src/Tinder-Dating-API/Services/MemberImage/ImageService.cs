@@ -17,7 +17,7 @@ using Tinder_Dating_API.Models.Responses;
 using System.IO;
 using System.Linq;
 using System;
-using Newtonsoft.Json;
+using Tinder_Dating_API.Services.Identity;
 
 namespace Tinder_Dating_API.Services.MemberImage
 {
@@ -28,13 +28,15 @@ namespace Tinder_Dating_API.Services.MemberImage
         private readonly IHttpContextAccessor _httpContextAccessor;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IIdentityService _identityService;
 
         public ImageService(
             ILogger logger,
-            IOptions<CloudinaryOption> cloudinaryConfig, 
-            IHttpContextAccessor httpContextAccessor, 
+            IOptions<CloudinaryOption> cloudinaryConfig,
+            IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
-            IMapper mapper)
+            IMapper mapper, 
+            IIdentityService identityService)
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
@@ -47,17 +49,15 @@ namespace Tinder_Dating_API.Services.MemberImage
             );
 
             _cloudinary = new Cloudinary(acc);
+            _identityService = identityService;
         }
 
         public async Task<Result<MemberImageResponse>> AddImageAsync(UploadPhotoRequest request) 
         {
             _logger.Here().MethoEnterd();
 
-            var username = _httpContextAccessor?.HttpContext?.User.GetAuthUserName();
-            var userNameSpec = new FindUserByUserNameSpec(username);
-            var user = await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(userNameSpec);
+            var user = await _identityService.GetCurrentAuthUser();
 
-           
             var file = request.File;
             var uploadResult = new ImageUploadResult();
 
@@ -80,32 +80,57 @@ namespace Tinder_Dating_API.Services.MemberImage
             return await PrepareImageResposne(uploadResult, user);
         }
 
-        public async Task<Result<DeletionResult>> DeleteImageAsync(DeletePhotoRequest request)
+        public async Task<Result<bool>> DeleteImageAsync(DeletePhotoRequest request)
         {
             _logger.Here().MethoEnterd();
-            
-            var deleteParams = new DeletionParams(request.PublicId);
-            var result = await _cloudinary.DestroyAsync(deleteParams);
 
-            if(result.Error != null)
+            var user = await _identityService.GetCurrentAuthUser();
+
+            var photo = user.Profile.Images.FirstOrDefault(x => x.Id == Guid.Parse(request.PhotoId));
+
+            if(photo == null)
             {
-                _logger.Error($"{ErrorCodes.Operationfailed}: Image deletion failed");
-                return Result<DeletionResult>.Fail(ErrorCodes.Operationfailed, result.Error.Message);
+                _logger.Here().Information("No photo was found with id {@PhotoId}.", request.PhotoId);
+                return Result<bool>.Fail(ErrorCodes.NotFound);
+            }
+
+            if (photo.IsMain)
+            {
+                _logger.Here().Information($"{ErrorCodes.BadRequest}: Trying to delete main photo.");
+                return Result<bool>.Fail(ErrorCodes.BadRequest, "Trying to delete main photo.");
+            }
+
+            if(photo.PublicId != null)
+            {
+                var deleteParams = new DeletionParams(photo.PublicId);
+                var result = await _cloudinary.DestroyAsync(deleteParams);
+
+                if (result.Error != null)
+                {
+                    _logger.Error($"{ErrorCodes.Operationfailed}: Image deletion failed");
+                    return Result<bool>.Fail(ErrorCodes.Operationfailed, result.Error.Message);
+                }
+            }
+
+            user.Profile.Images.Remove(photo);
+
+            if(await _unitOfWork.Complete() < 1)
+            {
+                _logger.Here().Information("Photo deleteion from database failed.");
+                return Result<bool>.Fail(ErrorCodes.Operationfailed, "Photo deletion from database failed.");
             }
 
             _logger.Here().Information("Image deleted successfully.");
             _logger.Here().MethodExited();
 
-            return Result<DeletionResult>.Success(result);
+            return Result<bool>.Success(true);
         }
 
         public async Task<Result<bool>> UpdatePhotoAsMain(UpdatePhotoRequest request)
         {
             _logger.Here().MethoEnterd();
 
-            var username = _httpContextAccessor.HttpContext.User.GetAuthUserName();
-            var spec = new FindUserByUserNameSpec(username);
-            var user = await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(spec);
+            var user = await _identityService.GetCurrentAuthUser();
 
             var photo = user.Profile.Images.FirstOrDefault(x => x.Id == Guid.Parse(request.PhotoId));
 

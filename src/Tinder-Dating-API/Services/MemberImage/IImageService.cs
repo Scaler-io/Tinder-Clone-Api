@@ -9,7 +9,7 @@ namespace Tinder_Dating_API.Services.MemberImage
     public interface IImageService
     {
         Task<Result<MemberImageResponse>> AddImageAsync(UploadPhotoRequest request);
-        Task<Result<DeletionResult>> DeleteImageAsync(DeletePhotoRequest request);
+        Task<Result<bool>> DeleteImageAsync(DeletePhotoRequest request);
         Task<Result<bool>> UpdatePhotoAsMain(UpdatePhotoRequest request);
     }
 }
