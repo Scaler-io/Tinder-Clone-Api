@@ -21,13 +21,18 @@ namespace Tinder_Dating_API.Services.Identity
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITokenService _tokenService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IBaseRepository<AppUser> _userRepository;
 
-        public IdentityService(ILogger logger, IUnitOfWork unitOfWork, ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
+        public IdentityService(ILogger logger, 
+            IUnitOfWork unitOfWork, 
+            ITokenService tokenService, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _tokenService = tokenService;
             _httpContextAccessor = httpContextAccessor;
+            _userRepository = _unitOfWork.Repository<AppUser>();
         }
 
         public async Task<Result<AuthSuccessResponse>> Login(LoginRequest request)
@@ -35,7 +40,7 @@ namespace Tinder_Dating_API.Services.Identity
             _logger.Here().MethoEnterd();
 
             var specification = new FindUserByUserNameSpec(request.Username);
-            var user = await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(specification);
+            var user = await _userRepository.GetEntityWithSpec(specification);
 
             if (user == null)
             {
@@ -82,7 +87,7 @@ namespace Tinder_Dating_API.Services.Identity
                 PasswordSalt = hmac.Key
             };
 
-            _unitOfWork.Repository<AppUser>().Add(user);
+            _userRepository.Add(user);
             await _unitOfWork.Complete();
 
             var token = _tokenService.CreateToken(user);
@@ -104,7 +109,7 @@ namespace Tinder_Dating_API.Services.Identity
             _logger.Here().MethoEnterd();
 
             var specification = new FindUserByUserNameSpec(username);
-            var user = await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(specification);
+            var user = await _userRepository.GetEntityWithSpec(specification);
 
             if (user == null) return false;
 
@@ -119,7 +124,7 @@ namespace Tinder_Dating_API.Services.Identity
                                     .GetAuthUserName();
 
             var spec = new FindUserByUserNameSpec(username);
-            return await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(spec);
+            return await _userRepository.GetEntityWithSpec(spec);
         }
     }
 }

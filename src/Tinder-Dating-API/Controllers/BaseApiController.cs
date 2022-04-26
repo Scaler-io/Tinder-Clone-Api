@@ -17,6 +17,7 @@ namespace Tinder_Dating_API.Controllers
 
         public IActionResult OkOrFail<T>(Result<T> result)
         {
+            if (result == null) return NotFound(new ApiResponse(ErrorCodes.NotFound));
             if (result.IsSuccess && result.Value == null) return NotFound(new ApiResponse(ErrorCodes.NotFound));
             if (result.IsSuccess && result.Value != null) return Ok(result.Value);
 

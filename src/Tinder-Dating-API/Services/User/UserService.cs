@@ -21,6 +21,7 @@ namespace Tinder_Dating_API.Services.User
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IBaseRepository<AppUser> _userRepository;
 
         public UserService(
             ILogger logger, 
@@ -32,31 +33,36 @@ namespace Tinder_Dating_API.Services.User
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _userRepository = _unitOfWork.Repository<AppUser>();
         }
 
-        public async Task<Result<IReadOnlyList<MemberResponse>>> GetUsers()
+        public async Task<Result<Pagination<MemberResponse>>> GetUsers(SpecParams param)
         {
             _logger.Here().MethoEnterd();
 
-            var spec = new GetUserWithProfileInfoSpec();
-            var users = await _unitOfWork.Repository<AppUser>().ListAsync(spec);
+            var spec = new GetUserWithProfileInfoSpec(param);
+            var totalItems = await _userRepository.CountAsync(spec);
+            var users = await _userRepository.ListAsync(spec);
 
             if(users == null)
             {
                 _logger.Information("No users found in database");
+                return null;
             }
 
             var result = _mapper.Map<IReadOnlyList<MemberResponse>>(users);
             _logger.Here().MethodExited();
 
-            return Result<IReadOnlyList<MemberResponse>>.Success(result);
+            return Result<Pagination<MemberResponse>>.Success(new Pagination<MemberResponse>(
+                param.PageIndex, param.PageSize, totalItems, result    
+            ));
         }
         public async Task<Result<MemberResponse>> GetUser(Guid id)
         {
             _logger.Here().MethoEnterd();
 
             var spec = new GetUserWithProfileInfoSpec(id);
-            var user = await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(spec);
+            var user = await _userRepository.GetEntityWithSpec(spec);
 
             if (user == null)
             {
@@ -73,7 +79,7 @@ namespace Tinder_Dating_API.Services.User
             _logger.Here().MethoEnterd();
 
             var spec = new FindUserByUserNameSpec(username);
-            var user = await _unitOfWork.Repository<AppUser>().GetEntityWithSpec(spec);
+            var user = await _userRepository.GetEntityWithSpec(spec);
 
             if (user == null)
             {
@@ -88,17 +94,16 @@ namespace Tinder_Dating_API.Services.User
         public async Task<Result<MemberResponse>> UpdateUserProfile(UserDetailsUpdateRequest request)
         {
             _logger.Here().MethoEnterd();
-            var repository = _unitOfWork.Repository<AppUser>();
 
             var username = _httpContextAccessor.HttpContext.User.GetAuthUserName();
 
             var spec = new FindUserByUserNameSpec(username);
-            var user = await repository.GetEntityWithSpec(spec);
+            var user = await _userRepository.GetEntityWithSpec(spec);
 
             _mapper.Map(request, user.Profile);
             //user.Profile.Address = request.Address;
             
-            repository.Update(user);
+            _userRepository.Update(user);
 
             if (await _unitOfWork.Complete() < 1)
             {

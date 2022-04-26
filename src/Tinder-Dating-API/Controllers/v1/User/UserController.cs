@@ -26,11 +26,11 @@ namespace Tinder_Dating_API.Controllers.v1.User
         [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]SpecParams param)
         {
             Logger.Here().MethoEnterd();
 
-            var users = await _userService.GetUsers();
+            var users = await _userService.GetUsers(param);
             Logger.Here().MethodExited();
 
             return OkOrFail(users);
