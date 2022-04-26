@@ -41,7 +41,7 @@ namespace Tinder_Dating_API.Services.User
             _logger.Here().MethoEnterd();
 
             var spec = new GetUserWithProfileInfoSpec(param);
-            var totalItems = await _userRepository.CountAsync(spec);
+            var totalItems = (await _userRepository.ListAllAsync()).Count;
             var users = await _userRepository.ListAsync(spec);
 
             if(users == null)
@@ -50,7 +50,10 @@ namespace Tinder_Dating_API.Services.User
                 return null;
             }
 
+            SetupPaginationHeader(param, totalItems);
+
             var result = _mapper.Map<IReadOnlyList<MemberResponse>>(users);
+
             _logger.Here().MethodExited();
 
             return Result<Pagination<MemberResponse>>.Success(new Pagination<MemberResponse>(
@@ -117,6 +120,12 @@ namespace Tinder_Dating_API.Services.User
             _logger.Here().MethodExited();
 
             return userDetails;
+        }
+        private void SetupPaginationHeader(SpecParams param, int totalItems)
+        {
+            var response = _httpContextAccessor.HttpContext.Response;
+            var totalPages = (int)Math.Ceiling((double)totalItems / param.PageSize);
+            response.AddPaginationResponseHeader(param.PageIndex, param.PageSize, totalItems, totalPages);
         }
     }
 }
