@@ -32,5 +32,16 @@ namespace Tinder_Dating_API.Controllers
                     return BadRequest(new ApiResponse(ErrorCodes.BadRequest, result.ErrorMessage));
             }
         }
+
+        public IActionResult CreatedWithRoute<T>(Result<T> result, string routeName, object param)
+        {
+            if (result.IsSuccess && result.Value != null) return CreatedAtRoute(
+                    routeName,
+                    param,
+                    result.Value
+                );
+
+            return OkOrFail(result);
+        }
     }
 }

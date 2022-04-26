@@ -2,10 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Tinder_Dating_API.DependencyInjections;
-using Tinder_Dating_API.Infrastructure;
 
 namespace Tinder_Dating_API
 {
@@ -32,12 +30,6 @@ namespace Tinder_Dating_API
      
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tinder_Dating_API v1"));
-            }
             app.AddApplicationConfigurations(env);
         }
     }

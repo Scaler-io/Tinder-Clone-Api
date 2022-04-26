@@ -25,7 +25,7 @@ namespace Tinder_Dating_API.Controllers.v1.User
         [HttpGet]
         [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetUsers()
         {
             Logger.Here().MethoEnterd();
@@ -41,7 +41,7 @@ namespace Tinder_Dating_API.Controllers.v1.User
         [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
 
         public async Task<IActionResult> GetUser([FromRoute] Guid id)
         {
@@ -59,7 +59,7 @@ namespace Tinder_Dating_API.Controllers.v1.User
         [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
 
         public async Task<IActionResult> GetUserByUserName([FromRoute] string username)
         {
@@ -73,6 +73,10 @@ namespace Tinder_Dating_API.Controllers.v1.User
 
         [HttpPut("profile/update")]
         [Authorize]
+        [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
+        [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> UpdateUserDetails([FromBody] UserDetailsUpdateRequest request)
         {
             Logger.Here().MethoEnterd();

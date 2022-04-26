@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using Tinder_Dating_API.Middlewares;
+using Microsoft.Extensions.Hosting;
 
 namespace Tinder_Dating_API.DependencyInjections
 {
@@ -109,9 +111,21 @@ namespace Tinder_Dating_API.DependencyInjections
 
         public static IApplicationBuilder AddApplicationConfigurations(this IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Tinder_Dating_API v1"));
+            }
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseMiddleware<RequestExceptionMiddleware>();
+
+            app.UseMiddleware<RequestLoggingMiddleware>();
 
             app.UseCors("TinderClonePolicy");
 
