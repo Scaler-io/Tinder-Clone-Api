@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Tinder_Dating_API.DataAccess.Interfaces;
 using Tinder_Dating_API.DataAccess.Specifications.User;
@@ -141,7 +140,7 @@ namespace Tinder_Dating_API.Services.User
         {
             var currentUser = await _identityService.GetCurrentAuthUser();
 
-            param.CurrentUserName = currentUser.UserName;
+            param.CurrentUserName = currentUser?.UserName;
 
             // applies age filters
             param.MinDob = DateTime.Now.AddYears(-param.MaxAge);

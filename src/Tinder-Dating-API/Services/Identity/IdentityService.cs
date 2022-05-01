@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Serilog;
 using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,17 +24,19 @@ namespace Tinder_Dating_API.Services.Identity
         private readonly ITokenService _tokenService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IBaseRepository<AppUser> _userRepository;
+        private readonly IMapper _mapper;
 
-        public IdentityService(ILogger logger, 
-            IUnitOfWork unitOfWork, 
-            ITokenService tokenService, 
-            IHttpContextAccessor httpContextAccessor)
+        public IdentityService(ILogger logger,
+            IUnitOfWork unitOfWork,
+            ITokenService tokenService,
+            IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _tokenService = tokenService;
             _httpContextAccessor = httpContextAccessor;
             _userRepository = _unitOfWork.Repository<AppUser>();
+            _mapper = mapper;
         }
 
         public async Task<Result<AuthSuccessResponse>> Login(LoginRequest request)
@@ -66,7 +70,10 @@ namespace Tinder_Dating_API.Services.Identity
             var authSuccess = new AuthSuccessResponse
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Gender = user.Profile.Gender,
+                PhotoUrl = user.Profile?.Images?.FirstOrDefault(m => m.IsMain)?.Url,
+                KnownAs = user.Profile.KnownAs
             };
 
             return Result<AuthSuccessResponse>.Success(authSuccess);
@@ -79,13 +86,15 @@ namespace Tinder_Dating_API.Services.Identity
             using var hmac = new HMACSHA512();
             var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
 
+            var userProfile = _mapper.Map<UserProfile>(request.Profile);
             var user = new AppUser
             {
                 Id = Guid.NewGuid(),
                 UserName = request.UserName,
                 PasswordHash = passwordHash,
-                PasswordSalt = hmac.Key
-            };
+                PasswordSalt = hmac.Key,
+                Profile = userProfile
+            };  
 
             _userRepository.Add(user);
             await _unitOfWork.Complete();
