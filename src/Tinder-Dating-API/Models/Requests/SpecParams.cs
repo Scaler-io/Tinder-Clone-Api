@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
-using Tinder_Dating_API.Entites;
 
 namespace Tinder_Dating_API.Models.Requests
 {
@@ -17,7 +15,7 @@ namespace Tinder_Dating_API.Models.Requests
         }
 
         public string CurrentUserName { get; set; }
-        public string Gender { get; set; }
+        public string GenderPreference { get; set; }
         public int MinAge { get; set; }
         public int MaxAge { get; set; }
         public DateTime MaxDob { get; set; }

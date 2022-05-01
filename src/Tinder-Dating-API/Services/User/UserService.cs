@@ -143,26 +143,15 @@ namespace Tinder_Dating_API.Services.User
 
             param.CurrentUserName = currentUser.UserName;
 
+            // applies age filters
             param.MinDob = DateTime.Now.AddYears(-param.MaxAge);
             param.MaxDob = DateTime.Now.AddYears(-param.MinAge);
-
-            //var obj = new
-            //{
-            //    curAge = currentUser.Profile.GetAge(),
-            //    cur = currentUser.Profile.DateOfBirth.Year,
-            //    parMin = param.MinDob.Year,
-            //    parMax = param.MaxDob.Year
-            //};
-
-
-            //await _httpContextAccessor.HttpContext.Response.WriteAsJsonAsync
-            //        (obj);
 
             // applies gender filter
             var gender = currentUser.Profile.Gender;
 
-            if (string.IsNullOrEmpty(param.Gender))
-                param.Gender = gender == "male" ? "female" : "male";
+            if (string.IsNullOrEmpty(param.GenderPreference))
+                param.GenderPreference = gender == "male" ? "female" : "male";
 
             return param;
         }
