@@ -13,6 +13,7 @@ using Tinder_Dating_API.Services.User;
 namespace Tinder_Dating_API.Controllers.v1.User
 {
     [ApiVersion("1")]
+    [Authorize]
     public class UserController : BaseApiController
     {
         private readonly IUserService _userService;
@@ -37,7 +38,6 @@ namespace Tinder_Dating_API.Controllers.v1.User
         }
 
         [HttpGet("{id}", Name = "GetUser")]
-        [Authorize]
         [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
@@ -55,7 +55,6 @@ namespace Tinder_Dating_API.Controllers.v1.User
         }
 
         [HttpGet("profile/{username}", Name = "GetUserByUserName")]
-        [Authorize]
         [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
@@ -72,7 +71,6 @@ namespace Tinder_Dating_API.Controllers.v1.User
         }
 
         [HttpPut("profile/update")]
-        [Authorize]
         [ProducesResponseType(typeof(MemberResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]

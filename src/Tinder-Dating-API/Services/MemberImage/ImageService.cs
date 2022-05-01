@@ -6,7 +6,6 @@ using Serilog;
 using System.Threading.Tasks;
 using AutoMapper;
 using Tinder_Dating_API.DataAccess.Interfaces;
-using Tinder_Dating_API.DataAccess.Specifications.User;
 using Tinder_Dating_API.Entites;
 using Tinder_Dating_API.Extensions;
 using Tinder_Dating_API.Infrastructure;
@@ -25,7 +24,6 @@ namespace Tinder_Dating_API.Services.MemberImage
     {
         private readonly ILogger _logger;
         private readonly Cloudinary _cloudinary;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IIdentityService _identityService;
@@ -33,13 +31,11 @@ namespace Tinder_Dating_API.Services.MemberImage
         public ImageService(
             ILogger logger,
             IOptions<CloudinaryOption> cloudinaryConfig,
-            IHttpContextAccessor httpContextAccessor,
             IUnitOfWork unitOfWork,
             IMapper mapper, 
             IIdentityService identityService)
         {
             _logger = logger;
-            _httpContextAccessor = httpContextAccessor;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             var acc = new Account(

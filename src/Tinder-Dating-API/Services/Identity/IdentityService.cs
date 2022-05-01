@@ -119,9 +119,10 @@ namespace Tinder_Dating_API.Services.Identity
         public async Task<AppUser> GetCurrentAuthUser()
         {
             var username    =      _httpContextAccessor
-                                    .HttpContext
-                                    .User
-                                    .GetAuthUserName();
+                                    ?.HttpContext
+                                    ?.User
+                                    ?.GetAuthUserName();
+
 
             var spec = new FindUserByUserNameSpec(username);
             return await _userRepository.GetEntityWithSpec(spec);

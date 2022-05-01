@@ -1,4 +1,8 @@
-﻿namespace Tinder_Dating_API.Models.Requests
+﻿using System;
+using System.Linq.Expressions;
+using Tinder_Dating_API.Entites;
+
+namespace Tinder_Dating_API.Models.Requests
 {
     public class SpecParams
     {
@@ -11,5 +15,12 @@
             get => _pageSize;
             set => _pageSize = value > MaxPageSize ? MaxPageSize : value;
         }
+
+        public string CurrentUserName { get; set; }
+        public string Gender { get; set; }
+        public int MinAge { get; set; }
+        public int MaxAge { get; set; }
+        public DateTime MaxDob { get; set; }
+        public DateTime MinDob { get; set; }
     }
 }

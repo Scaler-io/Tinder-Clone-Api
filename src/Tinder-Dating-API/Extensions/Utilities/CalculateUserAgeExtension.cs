@@ -6,8 +6,8 @@ namespace Tinder_Dating_API.Extensions.Utilities
     {
         public static int CalulateUserAge(this DateTime dob)
         {
-            var today = DateTime.Today;
-            var age = today.Year - dob.Year;
+            var today = DateTime.Now;
+            var age = today.AddYears(-dob.Year).Year;
 
             if (dob.Date > today.AddYears(-age)) age--;
             return age;

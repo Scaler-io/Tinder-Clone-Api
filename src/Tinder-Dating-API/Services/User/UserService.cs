@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Tinder_Dating_API.DataAccess.Interfaces;
 using Tinder_Dating_API.DataAccess.Specifications.User;
@@ -12,6 +13,7 @@ using Tinder_Dating_API.Models.Constants;
 using Tinder_Dating_API.Models.Core;
 using Tinder_Dating_API.Models.Requests;
 using Tinder_Dating_API.Models.Responses;
+using Tinder_Dating_API.Services.Identity;
 
 namespace Tinder_Dating_API.Services.User
 {
@@ -22,31 +24,38 @@ namespace Tinder_Dating_API.Services.User
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IBaseRepository<AppUser> _userRepository;
+        private readonly IIdentityService _identityService;
 
         public UserService(
-            ILogger logger, 
-            IUnitOfWork unitOfWork, 
-            IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor)
+            ILogger logger,
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor,
+            IIdentityService identityService)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _userRepository = _unitOfWork.Repository<AppUser>();
+            _identityService = identityService;
         }
 
         public async Task<Result<Pagination<MemberResponse>>> GetUsers(SpecParams param)
         {
             _logger.Here().MethoEnterd();
 
-            var spec = new GetUserWithProfileInfoSpec(param);
-            var totalItems = (await _userRepository.ListAllAsync()).Count;
-            var users = await _userRepository.ListAsync(spec);
+            var filteredParam = await ApplyFilter(param);
 
+            var spec = new GetUserWithProfileInfoSpec(filteredParam);
+            var countSpec = new UserWithFiltersCountSpec(filteredParam);
+
+            var users = await _userRepository.ListAsync(spec);
+            var totalItems = await _userRepository.CountAsync(countSpec);
+   
             if(users == null)
             {
-                _logger.Information("No users found in database");
+                _logger.Here().Information("No users found in database");
                 return null;
             }
 
@@ -69,7 +78,7 @@ namespace Tinder_Dating_API.Services.User
 
             if (user == null)
             {
-                _logger.Information("No user was found in database with {@Id}", id);
+                _logger.Here().Information("No user was found in database with {@Id}", id);
             }
 
             var result = _mapper.Map<MemberResponse>(user);
@@ -126,6 +135,36 @@ namespace Tinder_Dating_API.Services.User
             var response = _httpContextAccessor.HttpContext.Response;
             var totalPages = (int)Math.Ceiling((double)totalItems / param.PageSize);
             response.AddPaginationResponseHeader(param.PageIndex, param.PageSize, totalItems, totalPages);
+        }
+    
+        private async Task<SpecParams> ApplyFilter(SpecParams param)
+        {
+            var currentUser = await _identityService.GetCurrentAuthUser();
+
+            param.CurrentUserName = currentUser.UserName;
+
+            param.MinDob = DateTime.Now.AddYears(-param.MaxAge);
+            param.MaxDob = DateTime.Now.AddYears(-param.MinAge);
+
+            //var obj = new
+            //{
+            //    curAge = currentUser.Profile.GetAge(),
+            //    cur = currentUser.Profile.DateOfBirth.Year,
+            //    parMin = param.MinDob.Year,
+            //    parMax = param.MaxDob.Year
+            //};
+
+
+            //await _httpContextAccessor.HttpContext.Response.WriteAsJsonAsync
+            //        (obj);
+
+            // applies gender filter
+            var gender = currentUser.Profile.Gender;
+
+            if (string.IsNullOrEmpty(param.Gender))
+                param.Gender = gender == "male" ? "female" : "male";
+
+            return param;
         }
     }
 }
