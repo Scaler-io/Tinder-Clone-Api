@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Tinder_Dating_API.Infrastructure.Filters;
 using Tinder_Dating_API.Services.Identity;
 using Tinder_Dating_API.Services.MemberImage;
 using Tinder_Dating_API.Services.User;
@@ -13,6 +14,7 @@ namespace Tinder_Dating_API.DependencyInjections
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<LogUserActivityFilter>();
             return services;
         }
     }

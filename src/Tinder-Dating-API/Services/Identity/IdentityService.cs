@@ -64,10 +64,6 @@ namespace Tinder_Dating_API.Services.Identity
                 }
             }
 
-            user.Profile.LastActive = DateTime.Now;
-            _userRepository.Update(user);
-            await _unitOfWork.Complete();
-
             _logger.Information("Login to system successfull.");
             _logger.Here().MethodExited();
 
@@ -107,13 +103,13 @@ namespace Tinder_Dating_API.Services.Identity
         }
         public async Task<AppUser> GetCurrentAuthUser()
         {
-            var username    =      _httpContextAccessor
+            var userId    =      _httpContextAccessor
                                     ?.HttpContext
                                     ?.User
-                                    ?.GetAuthUserName();
+                                    ?.GetAuthUserId();
 
 
-            var spec = new FindUserByUserNameSpec(username);
+            var spec = new GetUserWithProfileInfoSpec(userId.Value);
             return await _userRepository.GetEntityWithSpec(spec);
         }
     

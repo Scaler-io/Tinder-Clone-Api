@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using Tinder_Dating_API.Infrastructure.Filters;
 using Tinder_Dating_API.Models.Constants;
 using Tinder_Dating_API.Models.Core;
 
 namespace Tinder_Dating_API.Controllers
 {
+    [ServiceFilter(typeof(LogUserActivityFilter))]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class BaseApiController : ControllerBase
