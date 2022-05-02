@@ -20,5 +20,7 @@ namespace Tinder_Dating_API.Models.Requests
         public int MaxAge { get; set; }
         public DateTime MaxDob { get; set; }
         public DateTime MinDob { get; set; }
+
+        public string Sort { get; set; }
     }
 }

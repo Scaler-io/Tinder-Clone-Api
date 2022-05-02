@@ -1,5 +1,6 @@
 ﻿using System;
 using Tinder_Dating_API.Entites;
+using Tinder_Dating_API.Models.Constants;
 using Tinder_Dating_API.Models.Requests;
 
 namespace Tinder_Dating_API.DataAccess.Specifications.User
@@ -16,6 +17,26 @@ namespace Tinder_Dating_API.DataAccess.Specifications.User
             AddIncludes("Profile.Address");
             AddIncludes("Profile.Images");
             ApplyPaging(param.PageSize * (param.PageIndex - 1), param.PageSize);
+            if (!string.IsNullOrEmpty(param.Sort))
+            {
+                switch (param.Sort)
+                {
+                    case SortParams.CreatedAsc:
+                        AddOrderBy(u => u.Profile.Created);
+                        break;
+                    case SortParams.CreatedDesc:
+                        AddOrderByDescending(u => u.Profile.Created);
+                        break;
+                    case SortParams.LastActiveAsc:
+                        AddOrderBy(u => u.Profile.LastActive);
+                        break;
+                    case SortParams.LastActiveDesc:
+                        AddOrderByDescending(u => u.Profile.LastActive);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
         public GetUserWithProfileInfoSpec(Guid id)
             :base(u => u.Id == id)

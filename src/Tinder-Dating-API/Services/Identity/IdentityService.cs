@@ -64,17 +64,14 @@ namespace Tinder_Dating_API.Services.Identity
                 }
             }
 
+            user.Profile.LastActive = DateTime.Now;
+            _userRepository.Update(user);
+            await _unitOfWork.Complete();
+
             _logger.Information("Login to system successfull.");
             _logger.Here().MethodExited();
 
-            var authSuccess = new AuthSuccessResponse
-            {
-                Username = user.UserName,
-                Token = _tokenService.CreateToken(user),
-                Gender = user.Profile.Gender,
-                PhotoUrl = user.Profile?.Images?.FirstOrDefault(m => m.IsMain)?.Url,
-                KnownAs = user.Profile.KnownAs
-            };
+            var authSuccess = GenerateAuthSuccessResponse(user);
 
             return Result<AuthSuccessResponse>.Success(authSuccess);
         }
@@ -82,33 +79,16 @@ namespace Tinder_Dating_API.Services.Identity
         public async Task<Result<AuthSuccessResponse>> Register(RegisterUserRequest request)
         {
             _logger.Here().MethoEnterd();
-            
-            using var hmac = new HMACSHA512();
-            var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
 
-            var userProfile = _mapper.Map<UserProfile>(request.Profile);
-            var user = new AppUser
-            {
-                Id = Guid.NewGuid(),
-                UserName = request.UserName,
-                PasswordHash = passwordHash,
-                PasswordSalt = hmac.Key,
-                Profile = userProfile
-            };  
+            var user = PopulateNewUser(request);
 
             _userRepository.Add(user);
             await _unitOfWork.Complete();
 
-            var token = _tokenService.CreateToken(user);
-            var authSuccess = new AuthSuccessResponse
-            {
-                Username = user.UserName,
-                Token = token
-            };
+            var authSuccess = GenerateAuthSuccessResponse(user);
 
             _logger.Information("New user has been created successfully. {@user}", user);
             _logger.Here().MethodExited();
-
 
             return Result<AuthSuccessResponse>.Success(authSuccess);
         }
@@ -136,5 +116,35 @@ namespace Tinder_Dating_API.Services.Identity
             var spec = new FindUserByUserNameSpec(username);
             return await _userRepository.GetEntityWithSpec(spec);
         }
+    
+        private AuthSuccessResponse GenerateAuthSuccessResponse(AppUser user)
+        {
+            return new AuthSuccessResponse
+            {
+                Username = user.UserName,
+                Token = _tokenService.CreateToken(user),
+                Gender = user.Profile.Gender,
+                PhotoUrl = user.Profile?.Images?.FirstOrDefault(m => m.IsMain)?.Url,
+                KnownAs = user.Profile.KnownAs
+            };
+        }
+        private AppUser PopulateNewUser(RegisterUserRequest request)
+        {
+            using var hmac = new HMACSHA512();
+            var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
+
+            var userProfile = _mapper.Map<UserProfile>(request.Profile);
+            userProfile.Created = DateTime.Now;
+            userProfile.LastActive = DateTime.Now;
+
+            return new AppUser
+            {
+                Id = Guid.NewGuid(),
+                UserName = request.UserName,
+                PasswordHash = passwordHash,
+                PasswordSalt = hmac.Key,
+                Profile = userProfile
+            };
+        } 
     }
 }
