@@ -17,6 +17,9 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Tinder_Dating_API.Middlewares;
 using Microsoft.Extensions.Hosting;
+using Tinder_Dating_API.Entites;
+using Microsoft.AspNetCore.Identity;
+using Tinder_Dating_API.DataAccess;
 
 namespace Tinder_Dating_API.DependencyInjections
 {
@@ -50,6 +53,16 @@ namespace Tinder_Dating_API.DependencyInjections
                     policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:4200");
                 });
             });
+
+            services.AddIdentityCore<AppUser>(options =>
+            {
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddRoles<AppRole>()
+            .AddRoleManager<RoleManager<AppRole>>()
+            .AddSignInManager<SignInManager<AppUser>>()
+            .AddRoleValidator<RoleValidator<AppRole>>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -6,6 +7,7 @@ using Serilog;
 using System;
 using System.Threading.Tasks;
 using Tinder_Dating_API.DataAccess;
+using Tinder_Dating_API.Entites;
 using Tinder_Dating_API.Extensions;
 
 namespace Tinder_Dating_API
@@ -63,7 +65,8 @@ namespace Tinder_Dating_API
             host.SeedDatabase<ApplicationDbContext>((context, services) =>
             {
                 var logger = services.GetRequiredService<ILogger>();
-                AppContextSeed.SeedAsync(context, logger).Wait();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                AppContextSeed.SeedAsync(userManager, logger).Wait();
             });
         }
     }

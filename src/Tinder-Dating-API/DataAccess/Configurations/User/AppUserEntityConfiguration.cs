@@ -13,7 +13,12 @@ namespace Tinder_Dating_API.DataAccess.Configurations.User
                     .WithOne(p => p.User)
                     .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasIndex(u => u.UserName).IsUnique();       
+            builder.HasIndex(u => u.UserName).IsUnique();    
+            
+            builder.HasMany(ur => ur.UserRoles)
+                    .WithOne(u => u.User)
+                    .HasForeignKey(u => u.UserId)
+                    .IsRequired();
         }
     }
 }

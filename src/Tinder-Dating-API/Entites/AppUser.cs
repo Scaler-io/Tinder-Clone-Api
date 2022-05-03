@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
+using System.Collections.Generic;
 
 namespace Tinder_Dating_API.Entites
 {
-    public class AppUser
+    public class AppUser : IdentityUser<Guid>
     {
-        public Guid Id { get; set; }
-        public string UserName { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
+       
         public UserProfile Profile { get; set; } = new UserProfile();
+        public ICollection<AppUserRole> UserRoles { get; set; }
         public AppUser() { }
 
         public AppUser(Guid id, string userName)
