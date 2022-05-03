@@ -66,7 +66,8 @@ namespace Tinder_Dating_API
             {
                 var logger = services.GetRequiredService<ILogger>();
                 var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                AppContextSeed.SeedAsync(userManager, logger).Wait();
+                var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+                AppContextSeed.SeedAsync(userManager, roleManager, logger).Wait();
             });
         }
     }
