@@ -68,7 +68,7 @@ namespace Tinder_Dating_API.Services.Identity
                 return Result<AuthSuccessResponse>.Fail(ErrorCodes.Unauthorized);
             }   
 
-            var authSuccess = GenerateAuthSuccessResponse(user);
+            var authSuccess = await GenerateAuthSuccessResponse(user);
 
             _logger.Information("Login to system successfull.");
             _logger.Here().MethodExited();
@@ -83,14 +83,20 @@ namespace Tinder_Dating_API.Services.Identity
             var user = PopulateNewUser(request);
 
             var result = await _userManager.CreateAsync(user, request.Password);
-
             if (!result.Succeeded)
             {
                 _logger.Here().Information($"{ErrorCodes.Operationfailed}: User registration failed. {result.Errors}");
                 return Result<AuthSuccessResponse>.Fail(ErrorCodes.BadRequest, "User registration failed.");
             }
 
-            var authSuccess = GenerateAuthSuccessResponse(user);
+            var roleResult = await _userManager.AddToRoleAsync(user, ApplicationRoles.Member);
+            if (!roleResult.Succeeded)
+            {
+                _logger.Here().Information($"{ErrorCodes.Operationfailed}: Role assignement to user failed. {result.Errors}");
+                return Result<AuthSuccessResponse>.Fail(ErrorCodes.BadRequest, "User registration failed.");
+            }
+
+            var authSuccess = await GenerateAuthSuccessResponse(user);
 
             _logger.Information("New user has been created successfully. {@user}", user);
             _logger.Here().MethodExited();
@@ -121,12 +127,12 @@ namespace Tinder_Dating_API.Services.Identity
             return await _userRepository.GetEntityWithSpec(spec);
         }
     
-        private AuthSuccessResponse GenerateAuthSuccessResponse(AppUser user)
+        private async Task<AuthSuccessResponse> GenerateAuthSuccessResponse(AppUser user)
         {
             return new AuthSuccessResponse
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user),
+                Token = await _tokenService.CreateToken(user),
                 Gender = user.Profile.Gender,
                 PhotoUrl = user.Profile?.Images?.FirstOrDefault(m => m.IsMain)?.Url,
                 KnownAs = user.Profile.KnownAs

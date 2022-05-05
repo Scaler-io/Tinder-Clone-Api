@@ -3,6 +3,7 @@ using Tinder_Dating_API.Infrastructure.Filters;
 using Tinder_Dating_API.Services.Identity;
 using Tinder_Dating_API.Services.MemberImage;
 using Tinder_Dating_API.Services.User;
+using Tinder_Dating_API.Services.User.Admin;
 
 namespace Tinder_Dating_API.DependencyInjections
 {
@@ -14,6 +15,7 @@ namespace Tinder_Dating_API.DependencyInjections
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<IAdminUserService, AdminUserService>();
             services.AddScoped<LogUserActivityFilter>();
             return services;
         }

@@ -10,7 +10,8 @@ namespace Tinder_Dating_API.Mapper.User
     {
         public UserMappingProfile()
         {
-            CreateMap<AppUser, MemberResponse>().ReverseMap();
+            CreateMap<AppUser, MemberResponse>();
+               
 
             CreateMap<UserProfile, MemberProfileResponse>()
                 .ForMember(p => p.AddressLine, o => o.MapFrom(s => s.Address != null ? createAddressLine(s.Address) : null))
@@ -18,6 +19,7 @@ namespace Tinder_Dating_API.Mapper.User
                 .ForMember(p => p.ImageUrl, o => o.MapFrom(s => s.Images.FirstOrDefault(i => i.IsMain == true).Url))
                 .ForMember(p => p.Created, o => o.MapFrom(s => s.Created.ToString("yyyy-MM-dd hh:mm:ss tt")))
                 .ForMember(p => p.LastActive, o => o.MapFrom(s => s.LastActive.ToString("yyyy-MM-dd hh:mm:ss tt")));
+                
 
             CreateMap<UserImage, MemberImageResponse>();
 

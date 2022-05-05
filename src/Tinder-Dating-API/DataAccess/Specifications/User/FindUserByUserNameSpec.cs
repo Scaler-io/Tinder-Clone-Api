@@ -9,6 +9,7 @@ namespace Tinder_Dating_API.DataAccess.Specifications.User
         {
             AddIncludes("Profile.Address");
             AddIncludes("Profile.Images");
+            AddIncludes("UserRoles");
         }
     }
 }

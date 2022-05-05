@@ -62,6 +62,7 @@ namespace Tinder_Dating_API.Services.User
 
             var result = _mapper.Map<IReadOnlyList<MemberResponse>>(users);
 
+            _logger.Here().Information("Total ussers fetched {@Count}", totalItems);
             _logger.Here().MethodExited();
 
             return Result<Pagination<MemberResponse>>.Success(new Pagination<MemberResponse>(

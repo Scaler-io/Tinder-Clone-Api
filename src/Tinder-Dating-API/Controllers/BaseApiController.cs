@@ -6,9 +6,10 @@ using Tinder_Dating_API.Models.Core;
 
 namespace Tinder_Dating_API.Controllers
 {
-    [ServiceFilter(typeof(LogUserActivityFilter))]
+
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [LogUserActivityFilter]
     public class BaseApiController : ControllerBase
     {
         public ILogger Logger { get; set; }

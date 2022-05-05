@@ -20,6 +20,7 @@ namespace Tinder_Dating_API
         {
             services.AddControllers();
             services.AddApplicationServices(_config);
+            services.AddApplicationAuthorizationServices();
             services.AddDataServices(_config);
             services.AddBusinessLayerServices();
             services.AddSwaggerGen(c =>

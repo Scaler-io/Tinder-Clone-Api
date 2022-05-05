@@ -5,6 +5,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Tinder_Dating_API.Extensions;
+using Tinder_Dating_API.Models.Constants;
 using Tinder_Dating_API.Models.Core;
 using Tinder_Dating_API.Models.Requests;
 using Tinder_Dating_API.Models.Responses;
@@ -42,7 +43,6 @@ namespace Tinder_Dating_API.Controllers.v1.User
         [ProducesResponseType(typeof(ApiValidationResponse), (int)HttpStatusCode.UnprocessableEntity)]
         [ProducesResponseType(typeof(ApiResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ApiExceptionResponse), (int)HttpStatusCode.InternalServerError)]
-
         public async Task<IActionResult> GetUser([FromRoute] Guid id)
         {
             Logger.Here().MethoEnterd();
