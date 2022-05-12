@@ -16,5 +16,8 @@ namespace Tinder_Dating_API.Entites
             Id = id;
             UserName = userName;
         }
+
+        public ICollection<UserLike> LikedByUser { get; set; }
+        public ICollection<UserLike> LikedUsers { get; set; }
     }
 }

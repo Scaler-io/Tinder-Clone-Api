@@ -20,6 +20,7 @@ namespace Tinder_Dating_API.DataAccess
         }
 
         public DbSet<AppUser> Users { get; set; }
+        public DbSet<UserLike> Likes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
